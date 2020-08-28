@@ -3,6 +3,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const TerserJSPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production'
 const isDev = !isProd
@@ -26,7 +28,7 @@ const jsLoaders = () => {
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
-  mode: 'development',
+  mode: isProd ? 'production' : 'development',
   entry: ['@babel/polyfill', './index.js'],
   output: {
     filename: filename('js'),
@@ -39,10 +41,15 @@ module.exports = {
       '@core': path.resolve(__dirname, 'src/core')
     }
   },
+  optimization: {
+    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+  },
   devtool: isDev ? 'source-map' : false,
   devServer: {
     port: 4000,
     hot: isDev,
+    contentBase: path.resolve(__dirname, 'src'),
+    watchContentBase: true,
   },
   plugins: [
     new CleanWebpackPlugin(),
