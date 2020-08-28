@@ -1,0 +1,18 @@
+@import "base/base";
+@import "base/variables";
+@import "base/mixins";
+
+@import "components/header";
+@import "components/toolbar";
+@import "components/formula";
+@import "components/table";
+@import "components/dashboard";
+
+.excel {
+  position: relative;
+  color: #888;
+  height: 100%;
+  max-width: 100%;
+  font-size: .8rem;
+}
+
