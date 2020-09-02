@@ -7,8 +7,12 @@
     },
     "rules": {
         "semi": "off",
-        "arrow-parent": "off",
-        "require-jsdoc": "off"
+        "arrow-parens": "off",
+        "require-jsdoc": "off",
+        "no-debugger": "off"
     },
-    "extends": ["eslint:recommended", "google"]
+    "extends": ["eslint:recommended", "google"],
+    "parserOptions": {
+        "fix": true
+    }
 }
