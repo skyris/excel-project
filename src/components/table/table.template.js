@@ -1,14 +1,20 @@
 import {CODES} from '@core/utils'
 
-function toCell(el) {
+function toCell(el, index) {
   return `
-    <div class="cell" contenteditable>${el}</div> 
+    <div 
+      class="cell"
+      contenteditable 
+      data-col="${index}"
+    >
+        ${el}
+    </div> 
   `
 }
 
-function toColumn(content) {
+function toColumn(content, index) {
   return `
-    <div class="column">
+    <div class="column" data-type="resizable" data-col="${index}">
       ${content}
       <div class="col-resize" data-resize="col"></div>
     </div> 
@@ -18,7 +24,7 @@ function toColumn(content) {
 function createRow(index, content) {
   const resize = index ? '<div class="row-resize" data-resize="row"></div>' : ''
   return `
-    <div class="row">
+    <div class="row" data-type="resizable">
       <div class="row-info">
         ${index ? index : ''}
         ${resize}

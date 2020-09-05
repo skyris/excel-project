@@ -1,4 +1,7 @@
 .excel__table {
+  --mouse-x: 0px;
+  --opacity-x: 0;
+
   position: absolute;
   left: 0;
   right: 0;
@@ -6,7 +9,32 @@
   overflow-x: auto;
   padding-bottom: 2px;
 
+  &::before {
+    content: '';
+    z-index: 10;
+    position: absolute;
+    background: $primary-color;
+    width: 3px;
+    height: 24px;
+    left: calc(var(--mouse-x) - 1px);
+    top: 0;
+    opacity: var(--opacity-x);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    background: $primary-color;
+    width: .8px;
+    left: var(--mouse-x);
+    top: 0;
+    bottom: 0;
+    opacity: var(--opacity-x);
+  }
+
+
   .row {
+    position: relative;
     display: flex;
     flex-direction: row;
     min-height: 20px;
@@ -48,6 +76,7 @@
   }
 
   .cell {
+    position: relative;
     min-width: 40px;
     padding: 5px;
     width: $cell-width;
@@ -95,6 +124,28 @@
       opacity: 1;
       cursor: row-resize;
     }
+  }
+
+  .row-resize-now::after {
+    content: '';
+    position: absolute;
+    display: block;
+    height: 4px;
+    background: $primary-color;
+    bottom: 2px;
+    right: 0;
+    left: 0;
+  }
+
+  .col-resize-now::after {
+    content: '';
+    position: absolute;
+    display: block;
+    width: 4px;
+    background: $primary-color;
+    top: -24px;
+    bottom: 0;
+    right: 0;
   }
 
 }

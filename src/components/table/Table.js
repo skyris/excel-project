@@ -1,58 +1,69 @@
 import {ExcelComponent} from '@core/ExcelComponent'
 import {createTable} from './table.template.js'
-import {CODES} from '@core/utils'
+// import {CODES} from '@core/utils'
+import {$} from '@core/dom'
 
 export class Table extends ExcelComponent {
   static className = 'excel__table'
 
   constructor($root) {
     super($root, {
-      listeners: ['mousedown', 'mousemove', 'mouseup'],
+      listeners: ['mousedown'],
     })
-    this.resize = null
-    this.target = null
-    this.width = null
-    this.height = null
-    this.startX = null
-    this.startY = null
+    this.document = {}
+    this.getElements = this.getElements.bind(this)
+    this.toDebounce = false
   }
 
   toHTML() {
     return createTable(50)
   }
 
+  getElements(selector) {
+    let element = this.document[selector]
+    if (!element) {
+      element = document.querySelectorAll(selector)
+      this.document[selector] = element
+    }
+
+    return element
+  }
+
   onMousedown(event) {
     if (event.target.dataset.resize) {
-      this.resize = event.target.dataset.resize
-      this.target = event.target.parentElement
-      this.width = this.target.offsetWidth
-      this.height = this.target.offsetHeight
-      this.startX = event.clientX
-      this.startY = event.clientY
-      this.rowData = Array.prototype.slice.call(
-          document.querySelectorAll('.row-data'), 1)
-    }
-  }
+      const $target = $(event.target)
+      const $parent = $target.closest('[data-type="resizable"]')
+      const coords = $parent.getCoords()
+      const pointer = document.querySelector('.excel__table')
+      pointer.style.setProperty('--mouse-x', event.clientX + 'px')
+      pointer.style.setProperty('--opacity-x', '1')
+      document.onmousemove = e => {
+        if (this.toDebounce) return
+        pointer.style.setProperty('--mouse-x', e.clientX + 'px')
+        this.toDebounce = true
+        setTimeout(() => this.toDebounce = false, 50)
 
-  onMousemove(event) {
-    if (this.resize === 'col') {
-      const width = `${this.width - this.startX + event.clientX}px`
-      this.target.style.width = width
-      const symbol = this.target.innerText
-      const colNum = symbol.charCodeAt(0) - CODES.A
-      this.rowData.forEach(row => row.children[colNum].style.width = width)
-    } else if (this.resize === 'row') {
-      this.target.parentElement.style.height =
-        `${this.height - this.startY + event.clientY}px`
-    }
-  }
+        // element.style.left = e.pageX + 'px'
+        // console.log('toDebounce: ', this.toDebounce)
+        // if (this.toDebounce) return
 
-  onMouseup(event) {
-    this.resize = null
-    this.target = null
-    this.width = null
-    this.height = null
-    this.startX = null
-    this.startY = null
+        // const delta = e.pageX - coords.right
+        // const value = coords.width + delta
+        // this.getElements(`[data-col="${$parent.data.col}"]`)
+        //     .forEach(el => el.style.width = value + 'px')
+
+        // console.log(this.document)
+        // this.toDebounce = true
+        // setTimeout(() => this.toDebounce = false, 50)
+      }
+      document.onmouseup = e => {
+        pointer.style.setProperty('--opacity-x', '0')
+        const delta = e.pageX - coords.right
+        const value = coords.width + delta
+        this.getElements(`[data-col="${$parent.data.col}"]`)
+            .forEach(el => el.style.width = value + 'px')
+        document.onmousemove = null
+      }
+    }
   }
 }
