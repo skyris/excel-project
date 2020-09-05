@@ -41,7 +41,7 @@ export class Table extends ExcelComponent {
         if (this.toDebounce) return
         pointer.style.setProperty('--mouse-x', e.clientX + 'px')
         this.toDebounce = true
-        setTimeout(() => this.toDebounce = false, 50)
+        setTimeout(() => this.toDebounce = false, 10)
 
         // element.style.left = e.pageX + 'px'
         // console.log('toDebounce: ', this.toDebounce)
@@ -67,3 +67,9 @@ export class Table extends ExcelComponent {
     }
   }
 }
+// 641 ms Scripting
+// 25958 ms Rendering
+// 1570 ms Painting
+// 1111 ms System
+// 14373 ms Idle
+// 43652 ms Total
