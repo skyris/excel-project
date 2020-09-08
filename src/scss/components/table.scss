@@ -1,6 +1,6 @@
 .excel__table {
-  --mouse-x: 0px;
-  --opacity-x: 0;
+  --mouse-vertical: 0;
+  --mouse-horizontal: 0;
 
   position: absolute;
   left: 0;
@@ -9,29 +9,47 @@
   overflow-x: auto;
   padding-bottom: 2px;
 
-  &::before {
-    content: '';
-    z-index: 10;
-    position: absolute;
-    background: $primary-color;
-    width: 4px;
-    height: 24px;
-    left: calc(var(--mouse-x) - 1.5px);
-    top: 0;
-    opacity: var(--opacity-x);
-  }
-
-  &::after {
-    content: '';
+  .vertical-pointer {
     position: absolute;
     background: $primary-color;
     width: .8px;
-    left: var(--mouse-x);
+    left: var(--mouse-vertical);
     top: 0;
     bottom: 0;
-    opacity: var(--opacity-x);
+    cursor: col-resize;
+
+    &::before {
+      content: '';
+      z-index: 10;
+      position: absolute;
+      background: $primary-color;
+      width: 4px;
+      height: 24px;
+      left: -1.6px;
+      top: 0;
+    }
   }
 
+  .horizontal-pointer {
+    position: absolute;
+    background: $primary-color;
+    height: .8px;
+    left: 0;
+    right: 0;
+    top: var(--mouse-horizontal);
+    cursor: row-resize;
+
+    &::before {
+      content: '';
+      z-index: 10;
+      position: absolute;
+      background: $primary-color;
+      height: 4px;
+      width: 40px;
+      left: 0;
+      top: -1.6px;
+    }
+  }
 
   .row {
     position: relative;

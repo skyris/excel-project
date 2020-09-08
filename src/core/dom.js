@@ -38,6 +38,11 @@ class Dom {
     return this
   }
 
+  remove() {
+    this.$el.remove()
+  }
+
+
   get data() {
     return this.$el.dataset
   }
@@ -52,6 +57,13 @@ class Dom {
 
   findAll(selector) {
     return this.$el.querySelectorAll(selector)
+  }
+
+  css(styles={}) {
+    Object.entries(styles).forEach(([key, value]) => {
+      this.$el.style.setProperty(key, value)
+    })
+    return this
   }
 }
 

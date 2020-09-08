@@ -1,6 +1,6 @@
 import {ExcelComponent} from '@core/ExcelComponent'
 import {createTable} from './table.template.js'
-// import {CODES} from '@core/utils'
+import {resizeHandler} from './table.resize.js'
 import {$} from '@core/dom'
 
 export class Table extends ExcelComponent {
@@ -13,6 +13,9 @@ export class Table extends ExcelComponent {
     this.document = {}
     this.getElements = this.getElements.bind(this)
     this.toDebounce = false
+    // Vertical and horizontal resize pointers
+    this.horizontal = $.create('div', 'horizontal-pointer')
+    this.vertical = $.create('div', 'vertical-pointer')
   }
 
   toHTML() {
@@ -30,46 +33,6 @@ export class Table extends ExcelComponent {
   }
 
   onMousedown(event) {
-    if (event.target.dataset.resize) {
-      const $target = $(event.target)
-      const $parent = $target.closest('[data-type="resizable"]')
-      const coords = $parent.getCoords()
-      const pointer = document.querySelector('.excel__table')
-      pointer.style.setProperty('--mouse-x', event.clientX + 'px')
-      pointer.style.setProperty('--opacity-x', '1')
-      document.onmousemove = e => {
-        if (this.toDebounce) return
-        pointer.style.setProperty('--mouse-x', e.clientX + 'px')
-        this.toDebounce = true
-        setTimeout(() => this.toDebounce = false, 10)
-
-        // element.style.left = e.pageX + 'px'
-        // console.log('toDebounce: ', this.toDebounce)
-        // if (this.toDebounce) return
-
-        // const delta = e.pageX - coords.right
-        // const value = coords.width + delta
-        // this.getElements(`[data-col="${$parent.data.col}"]`)
-        //     .forEach(el => el.style.width = value + 'px')
-
-        // console.log(this.document)
-        // this.toDebounce = true
-        // setTimeout(() => this.toDebounce = false, 50)
-      }
-      document.onmouseup = e => {
-        pointer.style.setProperty('--opacity-x', '0')
-        const delta = e.pageX - coords.right
-        const value = coords.width + delta
-        this.getElements(`[data-col="${$parent.data.col}"]`)
-            .forEach(el => el.style.width = value + 'px')
-        document.onmousemove = null
-      }
-    }
+    resizeHandler(this, event)
   }
 }
-// 641 ms Scripting
-// 25958 ms Rendering
-// 1570 ms Painting
-// 1111 ms System
-// 14373 ms Idle
-// 43652 ms Total
