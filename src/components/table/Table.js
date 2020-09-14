@@ -1,17 +1,18 @@
 import {ExcelComponent} from '@core/ExcelComponent'
 import {createTable} from './table.template.js'
 import {resizeHandler} from './table.resize.js'
+import {TableSelection} from './TableSelection.js'
 import {$} from '@core/dom'
+
 
 export class Table extends ExcelComponent {
   static className = 'excel__table'
 
   constructor($root) {
     super($root, {
-      listeners: ['mousedown'],
+      listeners: ['mousedown', 'click'],
     })
     this.document = {}
-    this.getElements = this.getElements.bind(this)
     this.toDebounce = false
     // Vertical and horizontal resize pointers
     this.horizontal = $.create('div', 'horizontal-pointer')
@@ -22,17 +23,17 @@ export class Table extends ExcelComponent {
     return createTable(50)
   }
 
-  getElements(selector) {
-    let element = this.document[selector]
-    if (!element) {
-      element = document.querySelectorAll(selector)
-      this.document[selector] = element
-    }
-
-    return element
+  init() {
+    super.init()
+    this.select = new TableSelection(this.$root)
   }
 
   onMousedown(event) {
     resizeHandler(this, event)
+    this.select.init(event)
+  }
+
+  onClick(event) {
+    // this.tableSelection.select(event)
   }
 }

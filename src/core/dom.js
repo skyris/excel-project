@@ -50,6 +50,24 @@ class Dom {
   closest(selector) {
     return $(this.$el.closest(selector))
   }
+  addClass(className) {
+    return this.$el.classList.add(className)
+  }
+
+  removeClass(className) {
+    return this.$el.classList.remove(className)
+  }
+
+  toggleClass(className) {
+    return this.$el.classList.toggle(className)
+  }
+  containsClass(className) {
+    return this.$el.classList.contains(className)
+  }
+
+  get children() {
+    return this.$el.children
+  }
 
   getCoords() {
     return this.$el.getBoundingClientRect()

@@ -5,7 +5,7 @@ function toCell(el, index) {
     <div 
       class="cell"
       contenteditable 
-      data-col="${index}"
+      data-col="${index + 1}"
     >
         ${el}
     </div> 
@@ -14,7 +14,7 @@ function toCell(el, index) {
 
 function toColumn(content, index) {
   return `
-    <div class="column" data-type="resizable" data-col="${index}">
+    <div class="column" data-type="resizable" data-col="${index + 1}">
       ${content}
       <div class="col-resize" data-resize="col"></div>
     </div> 
