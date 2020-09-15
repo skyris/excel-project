@@ -1,14 +1,14 @@
 import {CODES} from '@core/utils'
 
-function toCell(el, index) {
+const toCell = row => (_, col) => {
   return `
     <div 
       class="cell"
       contenteditable 
-      data-col="${index + 1}"
-    >
-        ${el}
-    </div> 
+      data-col="${col + 1}"
+      data-type="cell"
+      data-id="${row+1}:${col+1}"
+    ></div> 
   `
 }
 
@@ -50,17 +50,12 @@ export function createTable(rowsCount=30) {
 
   rows.push(createRow(null, cols))
 
-  // const cellCols = new Array(colsCount)
-  //     .fill('')
-  //     .map(toCell)
-  //     .join('')
-
-  for (let i = 0; i < rowsCount; i++) {
+  for (let row = 0; row < rowsCount; row++) {
     const cells = new Array(colsCount)
         .fill('')
-        .map(toCell)
+        .map(toCell(row))
         .join('')
-    rows.push(createRow(i + 1, cells))
+    rows.push(createRow(row + 1, cells))
   }
 
   return rows.join('')

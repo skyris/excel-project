@@ -27,73 +27,72 @@ export class TableSelection {
     this.lastMaxCol = null
     this.lastMinRow = null
     this.lastMaxRow = null
-    this.lastSelected = null
+    this.$lastSelected = null
     this.selectedCells = []
     this.colNumEnd = 1
     this.rowNumEnd = 1
   }
 
-  init(event) {
-    const cell = event.target.closest('.cell')
-    if (cell) {
-      const $cell = $(cell)
-      this.clearSelect()
-      this.clearSelectedGroup()
-      this.select($cell)
+  init(cell) {
+    const $cell = $(cell)
+    this.clearSelect()
+    this.clearSelectedGroup()
+    this.select($cell)
 
-      const $resizable = $cell.closest(RESIZABLE)
-      const colNumStart = parseInt($cell.data.col)
-      const rowNumStart = parseInt(
-          [...$resizable.children].filter(isRowInfo)[0].innerText
-      )
+    const $resizable = $cell.closest(RESIZABLE)
+    const colNumStart = parseInt($cell.data.col)
+    const rowNumStart = parseInt(
+        [...$resizable.children].filter(isRowInfo)[0].innerText
+    )
 
-      document.onmousemove = e => {
-        const $current = $(e.target)
-        const colNumEnd = parseInt($current.data.col) || this.colNumEnd
-        this.colNumEnd = colNumEnd
+    document.onmousemove = e => {
+      const $current = $(e.target)
+      const colNumEnd = parseInt($current.data.col) || this.colNumEnd
+      this.colNumEnd = colNumEnd
 
-        const $resizableEnd = $current.closest(RESIZABLE)
-        const rowNumEnd = isInRow($resizableEnd) ?
-          parseInt([...$resizableEnd.children].filter(isRowInfo)[0].innerText) :
-          this.rowNumEnd
-        this.rowNumEnd = rowNumEnd
+      const $resizableEnd = $current.closest(RESIZABLE)
+      const rowNumEnd = isInRow($resizableEnd) ?
+        parseInt([...$resizableEnd.children].filter(isRowInfo)[0].innerText) :
+        this.rowNumEnd
+      this.rowNumEnd = rowNumEnd
 
-        const [minCol, maxCol] = getMinAndMax(colNumStart, colNumEnd)
-        const [minRow, maxRow] = getMinAndMax(rowNumStart, rowNumEnd)
+      const [minCol, maxCol] = getMinAndMax(colNumStart, colNumEnd)
+      const [minRow, maxRow] = getMinAndMax(rowNumStart, rowNumEnd)
 
-        if (this.lastMinCol != minCol || this.lastMaxCol != maxCol ||
-            this.lastMinRow != minRow || this.lastMaxRow != maxRow) {
-          this.clearSelectedGroup()
-          this.lastMinCol = minCol
-          this.lastMaxCol = maxCol
-          this.lastMinRow = minRow
-          this.lastMaxRow = maxRow
-          this.selectGroup(minCol, maxCol, minRow, maxRow)
-        }
+      if (this.lastMinCol != minCol || this.lastMaxCol != maxCol ||
+          this.lastMinRow != minRow || this.lastMaxRow != maxRow) {
+        this.clearSelectedGroup()
+        this.lastMinCol = minCol
+        this.lastMaxCol = maxCol
+        this.lastMinRow = minRow
+        this.lastMaxRow = maxRow
+        this.selectGroup(minCol, maxCol, minRow, maxRow)
       }
-      document.onmouseup = e => {
-        console.log('stop')
-        document.onmousemove = null
-      }
+    }
+    document.onmouseup = e => {
+      console.log('stop')
+      document.onmousemove = null
     }
   }
 
   select($cell) {
     $cell.addClass(SELECTED)
-    this.lastSelected = $cell
+    this.$lastSelected = $cell
   }
 
   clearSelect() {
-    if (this.lastSelected) {
-      this.lastSelected.removeClass(SELECTED)
+    if (this.$lastSelected) {
+      this.$lastSelected.removeClass(SELECTED)
     }
   }
 
   selectGroup(minCol, maxCol, minRow, maxRow) {
     this.selectedCells = []
     for (let i = minCol; i <= maxCol; i++) {
-      const col = [...this.$root.findAll(`[data-col="${i}"]`)]
-          .filter(isCell).filter(isInRange(minRow, maxRow))
+      const col = this.$root.findAll(`[data-col="${i}"]`)
+          .map($el => $el.$el)
+          .filter(isCell)
+          .filter(isInRange(minRow, maxRow))
       this.selectedCells.push(...col)
     }
     this.selectedCells.map(paint(HIGHTLIGHTED))

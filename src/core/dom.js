@@ -74,7 +74,12 @@ class Dom {
   }
 
   findAll(selector) {
-    return this.$el.querySelectorAll(selector)
+    // return this.$el.querySelectorAll(selector)
+    return [...this.$el.querySelectorAll(selector)].map(el => $(el))
+  }
+
+  find(selector) {
+    return $(this.$el.querySelector(selector))
   }
 
   css(styles={}) {
