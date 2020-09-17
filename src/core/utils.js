@@ -10,7 +10,12 @@ export const CODES = {
   Z: 90,
 }
 
-export const filter = Array.prototype.filter
+export const TABLE = {
+  minWidth: 0,
+  maxWidth: 26,
+  minHeight: 0,
+  maxHeight: 100,
+}
 
 export function getMinAndMax(a, b) {
   return [Math.min(a, b), Math.max(a, b)]

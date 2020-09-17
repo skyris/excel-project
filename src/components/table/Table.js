@@ -3,6 +3,7 @@ import {createTable} from './table.template.js'
 import {resizeHandler} from './table.resize.js'
 import {TableSelection} from './TableSelection.js'
 import {shouldResize, isCell} from './table.functions.js'
+import {TABLE} from '@core/utils'
 import {$} from '@core/dom'
 
 
@@ -11,7 +12,7 @@ export class Table extends ExcelComponent {
 
   constructor($root) {
     super($root, {
-      listeners: ['mousedown', 'click'],
+      listeners: ['mousedown', 'click', 'keydown'],
     })
     this.document = {}
     this.toDebounce = false
@@ -21,26 +22,40 @@ export class Table extends ExcelComponent {
   }
 
   toHTML() {
-    return createTable(50)
+    return createTable(TABLE.maxHeight)
   }
 
   prepare() {
-    this.selection = new TableSelection(this.$root)
+    // this.selection = new TableSelection(this.$root)
   }
 
   init() {
     super.init()
-    const $cells = this.$root.find('[data-id="1:1"]')
-    this.selection.select($cells)
+    this.selection = new TableSelection(this.$root)
+    // const $cells = this.$root.find('[data-id="1:1"]')
+    // this.selection.select($cells)
   }
 
   onMousedown(event) {
     if (shouldResize(event)) {
       resizeHandler(this, event)
     } else if (isCell(event)) {
-      console.log(event)
-      console.log(event.shiftKey)
-      this.selection.init(event.target)
+      this.selection.mouseDownHandle(event)
+    }
+  }
+
+  onKeydown(event) {
+    const keys = [
+      'Tab',
+      'Enter',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+    ]
+    const shiftEnter = event.key === 'Enter' && event.shiftKey
+    if (keys.includes(event.key) && !shiftEnter) {
+      this.selection.keyDownHandle(event)
     }
   }
 

@@ -70,9 +70,7 @@
     border-top: 0;
     background: #f8f9fa;
     user-select: none;
-
   }
-
 
   .row-data {
     display: flex;
@@ -110,6 +108,10 @@
       border: none;
       outline: 2px solid $primary-color;
       z-index: 2;
+    }
+
+    &.group-selected {
+      background: rgba(14, 101, 235, .1);
     }
   }
 

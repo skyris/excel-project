@@ -7,7 +7,7 @@ const toCell = row => (_, col) => {
       contenteditable 
       data-col="${col + 1}"
       data-type="cell"
-      data-id="${row+1}:${col+1}"
+      data-id="${row}:${col}"
     ></div> 
   `
 }
