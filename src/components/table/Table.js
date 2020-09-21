@@ -3,7 +3,6 @@ import {createTable} from './table.template.js'
 import {resizeHandler} from './table.resize.js'
 import {TableSelection} from './TableSelection.js'
 import {shouldResize, isCell} from './table.functions.js'
-import {TABLE} from '@core/utils'
 import {$} from '@core/dom'
 
 
@@ -22,7 +21,7 @@ export class Table extends ExcelComponent {
   }
 
   toHTML() {
-    return createTable(TABLE.maxHeight)
+    return createTable()
   }
 
   prepare() {

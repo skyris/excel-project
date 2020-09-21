@@ -1,119 +1,154 @@
 .excel__table {
   --mouse-vertical: 0;
   --mouse-horizontal: 0;
+  --vertical: 24px;
+  --horizontal: 46px; 
+  --gap: 2px;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: $header-height + $toolbar-height + $formula-height;
-  overflow-x: auto;
+  overflow: auto;
+  grid-area: table;
   padding-bottom: 2px;
+  width: 100%;
+  position: relative;
 
-  .vertical-pointer {
-    position: absolute;
-    background: $primary-color;
-    width: .8px;
-    left: var(--mouse-vertical);
-    top: 0;
-    bottom: 0;
-    cursor: col-resize;
-
-    &::before {
-      content: '';
-      z-index: 10;
-      position: absolute;
-      background: $primary-color;
-      width: 4px;
-      height: 24px;
-      left: -1.6px;
-      top: 0;
-    }
-  }
-
-  .horizontal-pointer {
-    position: absolute;
-    background: $primary-color;
-    height: .8px;
+  .corner {
+    position: sticky;
     left: 0;
-    right: 0;
-    top: var(--mouse-horizontal);
-    cursor: row-resize;
+    top: 0;
+    height: var(--vertical);
+    width: var(--horizontal);
+    background: #f8f9fa;
+    border: 1px solid $border-color;
+    border-top: none;
+    z-index: 1000;
+  }
 
-    &::before {
-      content: '';
+  .corner:hover {
+    background: #ccc;
+  }
+
+  .container {
+    margin-top: calc(-1 * var(--vertical));
+    width: max-content;
+    display: grid;
+    grid-template-columns: var(--horizontal) auto 40px;
+    grid-template-rows: var(--vertical) auto auto;
+    column-gap: var(--gap);
+    row-gap: var(--gap);
+    grid-template-areas:
+      ".           cols-header right-shim"
+      "rows-header inner       right-shim"
+      "bottom-shim bottom-shim right-shim";
+
+    .right-shim {
+      grid-area: right-shim;
+      background: $shim-color;
+      margin-left: calc(-1 * var(--gap));
+      margin-right: calc(-3 * var(--gap));
+      margin-bottom: calc(-3 * var(--gap));
+    } 
+
+    .bottom-shim {
+      grid-area: bottom-shim;
+      background: $shim-color;
+      margin-top: calc(-1 * var(--gap));
+      margin-bottom: calc(-3 * var(--gap));
+
+      .add-rows-widget {
+        // TODO ADD-ROWS WIDGET
+        margin: 20px 0;
+        height: 80px;
+        width: 300px;
+        border: 1px solid #000;
+        position: sticky;
+        left: 100px;
+      }
+    } 
+
+    .cols-header {
+      grid-area: cols-header;
+      margin-left: -2px;
+      padding-left: 2px;
+      position: sticky;
+      top: 0;
+      display: flex;
+      border-bottom: 1px solid $border-color;
       z-index: 10;
-      position: absolute;
-      background: $primary-color;
-      height: 4px;
-      width: 40px;
+      background: $table-header-color;
+
+      .col-info {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 40px;
+        width: $cell-width;
+        height: 100%;
+        border-right: 1px solid $border-color;
+        user-select: none;
+      }
+    }
+
+    .rows-header {
+      grid-area: rows-header;
+      margin-top: -2px;
+      padding-top: 2px;
+      position: sticky;
       left: 0;
-      top: -1.6px;
+      right: 0;
+      border-right: 1px solid $border-color;
+      z-index: 10;
+      background: $table-header-color;
+
+      .row-info {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: $info-cell-width;
+        height: var(--vertical);
+        border: 1px solid $border-color;
+        border-top: none;
+        border-right: none;
+        user-select: none;
+      }
+    }
+
+    .inner {
+      grid-area: inner;
+
+      .row {
+        display: flex;
+        min-height: 20px;
+        height: var(--vertical);
+
+        .cell {
+          position: relative;
+          min-width: 40px;
+          padding: 5px;
+          width: $cell-width;
+          height: 100%;
+          outline: none;
+          border: 1px solid #e2e3e3;
+          border-top: 0;
+          border-left: 0;
+          color: #111;
+          white-space: nowrap;
+
+          &.selected {
+            border: none;
+            outline: 2px solid $primary-color;
+            z-index: 2;
+          }
+
+          &.group-selected {
+            background: rgba(14, 101, 235, .1);
+          }
+        }
+      }
     }
   }
 
-  .row {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    min-height: 20px;
-    height: $row-height;
-  }
-
-  .row-info {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: $info-cell-width;
-    height: 100%;
-    border: 1px solid $border-color;
-    border-top: 0;
-    background: #f8f9fa;
-    user-select: none;
-  }
-
-  .row-data {
-    display: flex;
-  }
-
-  .column {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #f8f9fa;
-    min-width: 40px;
-    width: $cell-width;
-    border: 1px solid $border-color;
-    border-top: 0;
-    border-left: 0;
-    height: 100%;
-    user-select: none;
-  }
-
-  .cell {
-    position: relative;
-    min-width: 40px;
-    padding: 5px;
-    width: $cell-width;
-    height: 100%;
-    outline: none;
-    border: 1px solid #e2e3e3;
-    border-top: 0;
-    border-left: 0;
-    color: #111;
-    white-space: nowrap;
-
-    &.selected {
-      border: none;
-      outline: 2px solid $primary-color;
-      z-index: 2;
-    }
-
-    &.group-selected {
-      background: rgba(14, 101, 235, .1);
-    }
-  }
 
   .col-resize, .row-resize {
     position: absolute;
@@ -141,31 +176,50 @@
     height: 4px;
 
     &:hover {
-      opacity: 1;
       cursor: row-resize;
     }
   }
 
-  .row-resize-now::after {
-    content: '';
+  // VERTICAL AND HORIZONTAL RESIZE POINTERS
+  .vertical-pointer {
     position: absolute;
-    display: block;
-    height: 4px;
     background: $primary-color;
-    bottom: 2px;
-    right: 0;
-    left: 0;
-  }
-
-  .col-resize-now::after {
-    content: '';
-    position: absolute;
-    display: block;
-    width: 4px;
-    background: $primary-color;
-    top: -24px;
+    width: .8px;
+    left: var(--mouse-vertical);
+    top: 0;
     bottom: 0;
-    right: 0;
+    cursor: col-resize;
+
+    &::before {
+      content: '';
+      z-index: 10;
+      position: absolute;
+      background: $primary-color;
+      width: 4px;
+      height: var(--vertical);
+      left: -1.6px;
+      top: 0;
+    }
   }
 
+  .horizontal-pointer {
+    position: absolute;
+    background: $primary-color;
+    height: .8px;
+    left: 0;
+    right: 0;
+    top: var(--mouse-horizontal);
+    cursor: row-resize;
+
+    &::before {
+      content: '';
+      z-index: 10;
+      position: absolute;
+      background: $primary-color;
+      height: 4px;
+      width: var(--horizontal);
+      left: 0;
+      top: -1.6px;
+    }
+  }
 }

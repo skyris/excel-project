@@ -50,11 +50,16 @@ export function resizeHandler(table, event) {
           .forEach($el => $el.css({width: value + 'px'}))
     } else {
       table.horizontal.remove()
+      console.log($parent)
+      console.log($parent.data.row)
       const delta = e.pageY - coords.bottom
       const value = coords.height + delta >= MIN_CELL_HEIGHT ?
         coords.height + delta :
         MIN_CELL_HEIGHT
-      $parent.css({height: value + 'px'})
+      table.$root.findAll(`[data-row="${$parent.data.row}"]`)
+          .forEach($el => $el.css({height: value + 'px'}))
+      // console.log($row)
+      // $row.css({height: value + 'px'})
     }
 
     document.onmousemove = null

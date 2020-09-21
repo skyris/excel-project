@@ -1,62 +1,109 @@
-import {CODES} from '@core/utils'
+import {CODES, TABLE} from '@core/utils'
+
+
+function toChar(_, index) {
+  return String.fromCharCode(CODES.A + index)
+}
+
+const toRowInfo = (_, index) => {
+  return `
+    <div 
+      class="row-info"
+      data-type="resizable"
+      data-row="${index}"
+    > ${index + 1}
+      <div class="row-resize" data-resize="row"></div>
+    </div>
+  `
+}
+
+const toColInfo = (content, index) => {
+  return `
+    <div 
+      class="col-info"
+      data-type="resizable"
+      data-col="${index}"
+    >
+      ${content}
+      <div class="col-resize" data-resize="col"></div>
+    </div>
+  `
+}
 
 const toCell = row => (_, col) => {
   return `
     <div 
       class="cell"
       contenteditable 
-      data-col="${col + 1}"
+      data-col="${col}"
       data-type="cell"
       data-id="${row}:${col}"
     ></div> 
   `
 }
 
-function toColumn(content, index) {
-  return `
-    <div class="column" data-type="resizable" data-col="${index + 1}">
-      ${content}
-      <div class="col-resize" data-resize="col"></div>
-    </div> 
-  `
-}
+const toContainer = content => `<div class="container">${content}</div>`
 
-function createRow(index, content) {
-  const resize = index ? '<div class="row-resize" data-resize="row"></div>' : ''
+const toRowsHeader = content => `<div class="rows-header">${content}</div>`
+
+const toColsHeader = content => `<div class="cols-header">${content}</div>`
+
+const toInner = content => `<div class="inner">${content}</div>`
+
+const toRow = (index, content) => {
   return `
-    <div class="row" data-type="resizable">
-      <div class="row-info">
-        ${index ? index : ''}
-        ${resize}
-      </div>
-      <div class="row-data">${content}</div>
+    <div
+      class="row"
+      data-row="${index}">
+        ${content}
     </div>
   `
 }
 
-function toChar(_, index) {
-  return String.fromCharCode(CODES.A + index)
-}
-
-export function createTable(rowsCount=30) {
+export function createTable(rowsCount=TABLE.maxHeight) {
+  const corner = '<div class="corner"></div>'
+  const rightShim = '<div class="right-shim"></div>'
+  const endShim = '<div class="end-shim"></div>'
+  const bottomShim = `<div class="bottom-shim">
+                        <div class="add-rows-widget"></div>
+                      </div>`
   const colsCount = CODES.Z - CODES.A + 1
-  const rows = []
 
-  const cols = new Array(colsCount)
+  const rowInfo = new Array(rowsCount)
       .fill('')
-      .map(toChar)
-      .map(toColumn)
+      .map(toRowInfo)
       .join('')
 
-  rows.push(createRow(null, cols))
+  const colInfo = new Array(colsCount)
+      .fill('')
+      .map(toChar)
+      .map(toColInfo)
+      .join('')
 
+  const rows = []
   for (let row = 0; row < rowsCount; row++) {
     const cells = new Array(colsCount)
         .fill('')
         .map(toCell(row))
         .join('')
-    rows.push(createRow(row + 1, cells))
+    rows.push(toRow(row, cells))
   }
 
-  return rows.join('')
+  const inContainer = []
+  inContainer.push(
+      toRowsHeader(rowInfo),
+      toColsHeader(colInfo),
+      toInner(rows.join('')),
+      rightShim,
+      bottomShim,
+      endShim
+  )
+
+  const inTable = []
+  inTable.push(
+      corner, toContainer(inContainer.join(''))
+  )
+
+  return inTable.join('')
 }
+
