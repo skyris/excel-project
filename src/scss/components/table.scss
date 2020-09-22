@@ -10,6 +10,9 @@
   padding-bottom: 2px;
   width: 100%;
   position: relative;
+  scroll-snap-type: both mandatory;
+  scroll-padding-left: var(--horizontal);
+  scroll-padding-top: var(--vertical);
 
   .corner {
     position: sticky;
@@ -87,6 +90,7 @@
         border-right: 1px solid $border-color;
         user-select: none;
       }
+      
     }
 
     .rows-header {
@@ -134,6 +138,10 @@
           border-left: 0;
           color: #111;
           white-space: nowrap;
+
+          scroll-snap-align: start;
+          scroll-margin-left: var(--gap);
+          scroll-margin-top: var(--gap);
 
           &.selected {
             border: none;
