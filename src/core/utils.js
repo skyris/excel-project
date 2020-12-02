@@ -20,3 +20,15 @@ export const TABLE = {
 export function getMinAndMax(a, b) {
   return [Math.min(a, b), Math.max(a, b)]
 }
+
+export function range(start, end) {
+  if (start > end) {
+    [start, end] = [end, start]
+  }
+  const ans = [];
+  for (let i = start; i <= end; i++) {
+    ans.push(i);
+  }
+
+  return ans;
+}

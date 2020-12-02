@@ -151,9 +151,8 @@
       }
     }
 
-    .header-selected {
-      // STYLING IS IN .header-selected:after
-    }
+    // STYLING IS IN .header-selected:after
+    // .header-selected { }
     
     .header-selected:after {
       content: '';

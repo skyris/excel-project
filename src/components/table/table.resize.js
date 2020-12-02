@@ -1,7 +1,7 @@
 import {$} from '@core/dom'
 
 export function resizeHandler(table, event) {
-  const $resizer = $(event.target)
+  const $resizer = $(event.target) // .col-resize or .row-resize
   const type = $resizer.data.resize
   const $parent = $resizer.closest('[data-type="resizable"]')
   const coords = $parent.getCoords()
@@ -50,16 +50,12 @@ export function resizeHandler(table, event) {
           .forEach($el => $el.css({width: value + 'px'}))
     } else {
       table.horizontal.remove()
-      console.log($parent)
-      console.log($parent.data.row)
       const delta = e.pageY - coords.bottom
       const value = coords.height + delta >= MIN_CELL_HEIGHT ?
         coords.height + delta :
         MIN_CELL_HEIGHT
       table.$root.findAll(`[data-row="${$parent.data.row}"]`)
           .forEach($el => $el.css({height: value + 'px'}))
-      // console.log($row)
-      // $row.css({height: value + 'px'})
     }
 
     document.onmousemove = null
