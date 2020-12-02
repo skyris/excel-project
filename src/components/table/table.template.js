@@ -60,23 +60,78 @@ const toRow = (index, content) => {
   `
 }
 
+const corner = '<div class="corner"></div>'
+
+const rightShim = '<div class="right-shim"></div>'
+
+const endShim = '<div class="end-shim"></div>'
+
+const bottomShim = `<div class="bottom-shim">
+                      <div class="add-rows-widget">
+                        <button
+                          class="add-rows-widget__button"
+                        >
+                          Add
+                        </button>
+                        <input
+                          class="add-rows-widget__input"
+                          type="text"
+                          value="100"
+                        >
+                        <div 
+                          class="add-rows-widget__text"
+                        >
+                          more rows at bottom
+                        </div>
+                      </div>
+                    </div>`
+
+// Hierarchy of html elements in excel table:
+
+// .excel_table
+//     .corner
+//     .container
+//         .rows-header            left
+//             .row-info
+//                 .row-resize
+//             .row-info
+//                 .row-resize
+//             .row-info
+//                 .row-resize
+//              ...
+//         .cols-header            top
+//             .col-info
+//                 .col-resize
+//             .col-info
+//                 .col-resize
+//             .col-info
+//                 .col-resize
+//              ...
+//         .inner
+//             .row
+//                 .cell 0:0
+//                 .cell 0:2
+//                 .cell 0:3
+//             .row
+//                 .cell 1:0
+//                 .cell 1:2
+//                 .cell 1:3
+//         .right-shim
+//         .bottom-shim
+//             .add-rows-widget
+//         .end-shim
+
 export function createTable(rowsCount=TABLE.maxHeight) {
-  const corner = '<div class="corner"></div>'
-  const rightShim = '<div class="right-shim"></div>'
-  const endShim = '<div class="end-shim"></div>'
-  const bottomShim = `<div class="bottom-shim">
-                        <div class="add-rows-widget"></div>
-                      </div>`
   const colsCount = CODES.Z - CODES.A + 1
 
   const rowInfo = new Array(rowsCount)
       .fill('')
-      .map(toRowInfo)
+      .map(toRowInfo) // setting numbers: 1, 2, 3 ...
       .join('')
 
   const colInfo = new Array(colsCount)
       .fill('')
-      .map(toChar)
+      .map(toChar) // setting letters: A, B, C ...
       .map(toColInfo)
       .join('')
 
