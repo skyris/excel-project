@@ -1,17 +1,18 @@
 import {CODES, TABLE} from '@core/utils'
+import {$} from '@core/dom'
 
 
 function toChar(_, index) {
   return String.fromCharCode(CODES.A + index)
 }
 
-const toRowInfo = (_, index) => {
+const toRowInfo = (shift=0) => (_, index) => {
   return `
     <div 
       class="row-info"
       data-type="resizable"
-      data-row="${index}"
-    > ${index + 1}
+      data-row="${index + shift}"
+    > ${index + 1 + shift}
       <div class="row-resize" data-resize="row"></div>
     </div>
   `
@@ -70,6 +71,7 @@ const bottomShim = `<div class="bottom-shim">
                       <div class="add-rows-widget">
                         <button
                           class="add-rows-widget__button"
+                          data-type="add-rows-button"
                         >
                           Add
                         </button>
@@ -77,6 +79,7 @@ const bottomShim = `<div class="bottom-shim">
                           class="add-rows-widget__input"
                           type="text"
                           value="100"
+                          data-type="add-rows-input"
                         >
                         <div 
                           class="add-rows-widget__text"
@@ -126,7 +129,7 @@ export function createTable(rowsCount=TABLE.maxHeight) {
 
   const rowInfo = new Array(rowsCount)
       .fill('')
-      .map(toRowInfo) // setting numbers: 1, 2, 3 ...
+      .map(toRowInfo()) // setting numbers: 1, 2, 3 ...
       .join('')
 
   const colInfo = new Array(colsCount)
@@ -158,7 +161,33 @@ export function createTable(rowsCount=TABLE.maxHeight) {
   inTable.push(
       corner, toContainer(inContainer.join(''))
   )
-
   return inTable.join('')
 }
 
+export function addMoreRowsToTable() {
+  const lastHeight = TABLE.maxHeight
+  const colsCount = CODES.Z - CODES.A + 1
+  const $inner = $('.inner')
+  const $rowsHeader = $('.rows-header')
+  const $addRowsInput = $('[data-type="add-rows-input"]')
+  const rowsCount = $addRowsInput.numValue
+
+  const rowInfo = new Array(rowsCount)
+      .fill('')
+      .map(toRowInfo(lastHeight))
+      .join('')
+
+  const rows = []
+  for (let row = lastHeight; row < lastHeight + rowsCount; row++) {
+    const cells = new Array(colsCount)
+        .fill('')
+        .map(toCell(row))
+        .join('')
+    rows.push(toRow(row, cells))
+  }
+
+  TABLE.maxHeight += rowsCount
+  $rowsHeader.insertHTML(rowInfo)
+  $inner.insertHTML(rows.join(''))
+  $addRowsInput.$el.scrollIntoView()
+}

@@ -1,8 +1,8 @@
 import {ExcelComponent} from '@core/ExcelComponent'
-import {createTable} from './table.template.js'
+import {createTable, addMoreRowsToTable} from './table.template.js'
 import {resizeHandler} from './table.resize.js'
 import {TableSelection} from './TableSelection.js'
-import {shouldResize, isCell} from './table.functions.js'
+import {shouldResize, isCell, isAddRowsButton} from './table.functions.js'
 import {$} from '@core/dom'
 
 
@@ -40,6 +40,8 @@ export class Table extends ExcelComponent {
       resizeHandler(this, event)
     } else if (isCell(event)) {
       this.selection.mouseDownHandle(event)
+    } else if (isAddRowsButton(event)) {
+      addMoreRowsToTable()
     }
   }
 

@@ -13,6 +13,10 @@ class Dom {
     return this.$el.outerHTML.trim()
   }
 
+  insertHTML(html) {
+    this.$el.insertAdjacentHTML('beforeend', html)
+  }
+
   clear() {
     this.html('')
     return this
@@ -66,6 +70,14 @@ class Dom {
   }
   containsClass(className) {
     return this.$el.classList.contains(className)
+  }
+
+  get numValue() {
+    const found = this.$el.value.match(/([0-9]*)/g);
+    const value = found.filter(el => el.length != 0)
+        .map(el => parseInt(el, 10))[0] || 0
+    this.$el.value = value
+    return value
   }
 
   get children() {

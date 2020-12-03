@@ -3,3 +3,7 @@ export function shouldResize(event) {
 }
 
 export const isCell = event => event.target.dataset.type === 'cell'
+
+export const isAddRowsButton = event => {
+  return event.target.dataset.type === 'add-rows-button'
+}
