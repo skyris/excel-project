@@ -12,6 +12,7 @@ export class Table extends ExcelComponent {
   constructor($root) {
     super($root, {
       listeners: ['mousedown', 'click', 'keydown'],
+      name: 'Table',
     })
     this.document = {}
     this.toDebounce = false
