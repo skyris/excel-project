@@ -83,8 +83,9 @@ export class Matrix {
 
   getCursorPlaceInMatrix() {
     if (this.isEmpty) return
-    const {colStart, colEnd} = this.border
+    const {colStart, colEnd, rowStart, rowEnd} = this.border
     const colsNumber = Math.abs(colEnd - colStart) + 1
+    const rowsNumber = Math.abs(rowEnd - rowStart) + 1
     const cursorColumnPlace = this.cursorPlace % colsNumber
     let column
     if (cursorColumnPlace === colsNumber - 1) {
@@ -96,7 +97,7 @@ export class Matrix {
     }
     const cursorRowPlace = Math.floor(this.cursorPlace / colsNumber)
     let row
-    if (cursorRowPlace === colsNumber - 1) {
+    if (cursorRowPlace === rowsNumber - 1) {
       row = LAST_PLACE
     } else if (cursorRowPlace === 0 ) {
       row = FIRST_PLACE
@@ -180,13 +181,16 @@ export class Matrix {
         this.fill($point0, $point1)
       }
     } else {
+      console.log('>>>>> here');
       if (this.isEmpty) {
         // isEmpty -> grow up
         const {row, col} = this.$cursor.id()
         this.fill(this.$root.find(`[data-id="${row-1}:${col}"]`))
         return
       }
+      console.log('>>>>>> and here');
       const {row} = this.getCursorPlaceInMatrix()
+      console.log('row: ', row);
       const {rowStart, rowEnd, colStart, colEnd} = this.border
       if (row === LAST_PLACE) {
         // last row -> grow up
