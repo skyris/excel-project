@@ -88,31 +88,24 @@ export class Matrix {
     const rowsNumber = Math.abs(rowEnd - rowStart) + 1
     const cursorColumnPlace = this.cursorPlace % colsNumber
     let column
-    if (cursorColumnPlace === colsNumber - 1) {
-      column = LAST_PLACE
-    } else if (cursorColumnPlace === 0 ) {
+    if (cursorColumnPlace === 0 ) {
       column = FIRST_PLACE
+    } else if (cursorColumnPlace === colsNumber - 1) {
+      column = LAST_PLACE
     } else {
       column = OTHER_PLACE
     }
     const cursorRowPlace = Math.floor(this.cursorPlace / colsNumber)
     let row
-    if (cursorRowPlace === rowsNumber - 1) {
-      row = LAST_PLACE
-    } else if (cursorRowPlace === 0 ) {
+    if (cursorRowPlace === 0 ) {
       row = FIRST_PLACE
+    } else if (cursorRowPlace === rowsNumber - 1) {
+      row = LAST_PLACE
     } else {
       row = OTHER_PLACE
     }
-    // first, last, else
+    // first, last, other
     return {row, column}
-    //   0   1   2             3
-
-    //   0   1   2       0     5
-    //   3   4   5       1
-    //   6   7   8       2
-    //   9   10  11      3
-    //   12  13  14      4
   }
 
   growShrinkHorizontal(sign=1) {
@@ -120,6 +113,7 @@ export class Matrix {
       if (this.isEmpty) {
         // isEmpty -> grow right
         const {row, col} = this.$cursor.id()
+        if (col === TABLE.maxWidth - 1) return
         this.fill(this.$root.find(`[data-id="${row}:${col+1}"]`))
         return
       }
@@ -127,6 +121,7 @@ export class Matrix {
       const {rowStart, rowEnd, colStart, colEnd} = this.border
       if (column === FIRST_PLACE) {
         // first col -> grow right
+        if (colEnd === TABLE.maxWidth - 1) return
         const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart}"]`)
         const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd+1}"]`)
         this.fill($point0, $point1)
@@ -140,6 +135,7 @@ export class Matrix {
       if (this.isEmpty) {
         // isEmpty -> grow left
         const {row, col} = this.$cursor.id()
+        if (col === TABLE.minWidth) return
         this.fill(this.$root.find(`[data-id="${row}:${col - 1}"]`))
         return
       }
@@ -147,11 +143,13 @@ export class Matrix {
       const {rowStart, rowEnd, colStart, colEnd} = this.border
       if (column === LAST_PLACE) {
         // first col -> grow left
+        if (colStart === TABLE.minWidth) return
         const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart-1}"]`)
         const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd}"]`)
         this.fill($point0, $point1)
       } else {
         // else -> shrink left
+        if (colStart === TABLE.minWidth) return
         const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart}"]`)
         const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd-1}"]`)
         this.fill($point0, $point1)
@@ -164,6 +162,7 @@ export class Matrix {
       if (this.isEmpty) {
         // isEmpty -> grow up
         const {row, col} = this.$cursor.id()
+        if (row === TABLE.maxHeight - 1) return
         this.fill(this.$root.find(`[data-id="${row+1}:${col}"]`))
         return
       }
@@ -171,6 +170,7 @@ export class Matrix {
       const {rowStart, rowEnd, colStart, colEnd} = this.border
       if (row === FIRST_PLACE) {
         // first row -> grow down
+        if (rowEnd === TABLE.maxHeight - 1) return
         const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart}"]`)
         const $point1 = this.$root.find(`[data-id="${rowEnd+1}:${colEnd}"]`)
         this.fill($point0, $point1)
@@ -181,19 +181,18 @@ export class Matrix {
         this.fill($point0, $point1)
       }
     } else {
-      console.log('>>>>> here');
       if (this.isEmpty) {
         // isEmpty -> grow up
         const {row, col} = this.$cursor.id()
+        if (row === TABLE.minHeight) return
         this.fill(this.$root.find(`[data-id="${row-1}:${col}"]`))
         return
       }
-      console.log('>>>>>> and here');
       const {row} = this.getCursorPlaceInMatrix()
-      console.log('row: ', row);
       const {rowStart, rowEnd, colStart, colEnd} = this.border
       if (row === LAST_PLACE) {
         // last row -> grow up
+        if (rowStart === TABLE.minHeight) return
         const $point0 = this.$root.find(`[data-id="${rowStart-1}:${colStart}"]`)
         const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd}"]`)
         this.fill($point0, $point1)
@@ -204,10 +203,6 @@ export class Matrix {
         this.fill($point0, $point1)
       }
     }
-  }
-
-  getCursorRowNumber() {
-
   }
 
   addGroupClass() {

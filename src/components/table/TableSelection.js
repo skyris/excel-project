@@ -30,11 +30,7 @@ export class TableSelection {
   }
 
   keyDownHandle(event) {
-    // TODO перемещение select-ом по выделенным полям с помощью Enter и Tab
-    // TODO arrow keys + shift = selector стоит на месте, а меняется secondPlace
     event.preventDefault()
-    console.log('> ', this.matrix.cursorPlace);
-    console.log(this.matrix.getCursorPlaceInMatrix());
     switch (event.key) {
       case 'Enter':
         this.matrix.moveVertical()
