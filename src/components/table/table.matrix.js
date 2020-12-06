@@ -1,5 +1,6 @@
 import {range} from '@core/utils'
 import {TABLE} from '@core/utils'
+import {isDomInstance} from './table.functions'
 
 const FIRST_PLACE = 'FIRST_PLACE'
 const LAST_PLACE = 'LAST_PLACE'
@@ -15,7 +16,6 @@ export class Matrix {
     this.$root = $root
     this.$cursor = null
     this.cursorPlace = null
-    this.$secondPoint = null
     this.border = {
       rowStart: null,
       rowEnd: null,
@@ -39,14 +39,18 @@ export class Matrix {
     this.$root.find(`[data-row="${row}"]`).addClass(Matrix.headerClass)
   }
 
-  fill($point, $point2=null) {
-    this.empty()
-    if ($point2 === null) {
-      $point2 = this.$cursor
+  fill(point, point2=null) {
+    if (isDomInstance(point)) {
+      point = point.id()
     }
-    this.$secondPoint = $point
-    let {row: rowStart, col: colStart} = $point.id()
-    let {row: rowEnd, col: colEnd} = $point2.id()
+    if (isDomInstance(point2)) {
+      point2 = point2.id()
+    } else if (point2 === null) {
+      point2 = this.$cursor.id()
+    }
+    this.empty()
+    let {row: rowStart, col: colStart} = point
+    let {row: rowEnd, col: colEnd} = point2
     if (rowStart > rowEnd) {
       [rowStart, rowEnd] = [rowEnd, rowStart]
     }
@@ -77,7 +81,6 @@ export class Matrix {
       this.removeHeaderClass()
       this._data = []
       this.cursorPlace = null
-      this.$secondPoint = null
     }
   }
 
@@ -114,7 +117,7 @@ export class Matrix {
         // isEmpty -> grow right
         const {row, col} = this.$cursor.id()
         if (col === TABLE.maxWidth - 1) return
-        this.fill(this.$root.find(`[data-id="${row}:${col+1}"]`))
+        this.fill({row, col: col + 1})
         return
       }
       const {column} = this.getCursorPlaceInMatrix()
@@ -122,21 +125,21 @@ export class Matrix {
       if (column === FIRST_PLACE) {
         // first col -> grow right
         if (colEnd === TABLE.maxWidth - 1) return
-        const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart}"]`)
-        const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd+1}"]`)
-        this.fill($point0, $point1)
+        const point = {row: rowStart, col: colStart}
+        const point2 = {row: rowEnd, col: colEnd + 1}
+        this.fill(point, point2)
       } else {
         // else -> shrink right
-        const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart+1}"]`)
-        const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd}"]`)
-        this.fill($point0, $point1)
+        const point = {row: rowStart, col: colStart + 1}
+        const point2 = {row: rowEnd, col: colEnd}
+        this.fill(point, point2)
       }
     } else {
       if (this.isEmpty) {
         // isEmpty -> grow left
         const {row, col} = this.$cursor.id()
         if (col === TABLE.minWidth) return
-        this.fill(this.$root.find(`[data-id="${row}:${col - 1}"]`))
+        this.fill({row, col: col - 1})
         return
       }
       const {column} = this.getCursorPlaceInMatrix()
@@ -144,15 +147,15 @@ export class Matrix {
       if (column === LAST_PLACE) {
         // first col -> grow left
         if (colStart === TABLE.minWidth) return
-        const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart-1}"]`)
-        const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd}"]`)
-        this.fill($point0, $point1)
+        const point = {row: rowStart, col: colStart - 1}
+        const point2 = {row: rowEnd, col: colEnd}
+        this.fill(point, point2)
       } else {
         // else -> shrink left
         if (colStart === TABLE.minWidth) return
-        const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart}"]`)
-        const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd-1}"]`)
-        this.fill($point0, $point1)
+        const point = {row: rowStart, col: colStart}
+        const point2 = {row: rowEnd, col: colEnd - 1}
+        this.fill(point, point2)
       }
     }
   }
@@ -163,7 +166,7 @@ export class Matrix {
         // isEmpty -> grow up
         const {row, col} = this.$cursor.id()
         if (row === TABLE.maxHeight - 1) return
-        this.fill(this.$root.find(`[data-id="${row+1}:${col}"]`))
+        this.fill({row: row+1, col})
         return
       }
       const {row} = this.getCursorPlaceInMatrix()
@@ -171,21 +174,21 @@ export class Matrix {
       if (row === FIRST_PLACE) {
         // first row -> grow down
         if (rowEnd === TABLE.maxHeight - 1) return
-        const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart}"]`)
-        const $point1 = this.$root.find(`[data-id="${rowEnd+1}:${colEnd}"]`)
-        this.fill($point0, $point1)
+        const point = {row: rowStart, col: colStart}
+        const point2 = {row: rowEnd + 1, col: colEnd}
+        this.fill(point, point2)
       } else {
         // else -> shrink down
-        const $point0 = this.$root.find(`[data-id="${rowStart+1}:${colStart}"]`)
-        const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd}"]`)
-        this.fill($point0, $point1)
+        const point = {row: rowStart + 1, col: colStart}
+        const point2 = {row: rowEnd, col: colEnd}
+        this.fill(point, point2)
       }
     } else {
       if (this.isEmpty) {
         // isEmpty -> grow up
         const {row, col} = this.$cursor.id()
         if (row === TABLE.minHeight) return
-        this.fill(this.$root.find(`[data-id="${row-1}:${col}"]`))
+        this.fill({row: row - 1, col})
         return
       }
       const {row} = this.getCursorPlaceInMatrix()
@@ -193,14 +196,14 @@ export class Matrix {
       if (row === LAST_PLACE) {
         // last row -> grow up
         if (rowStart === TABLE.minHeight) return
-        const $point0 = this.$root.find(`[data-id="${rowStart-1}:${colStart}"]`)
-        const $point1 = this.$root.find(`[data-id="${rowEnd}:${colEnd}"]`)
-        this.fill($point0, $point1)
+        const point = {row: rowStart - 1, col: colStart}
+        const point2 = {row: rowEnd, col: colEnd}
+        this.fill(point, point2)
       } else {
         // else -> shrink up
-        const $point0 = this.$root.find(`[data-id="${rowStart}:${colStart}"]`)
-        const $point1 = this.$root.find(`[data-id="${rowEnd-1}:${colEnd}"]`)
-        this.fill($point0, $point1)
+        const point = {row: rowStart, col: colStart}
+        const point2 = {row: rowEnd - 1, col: colEnd}
+        this.fill(point, point2)
       }
     }
   }
