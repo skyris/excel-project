@@ -13,6 +13,10 @@ class Dom {
     return this.$el.outerHTML.trim()
   }
 
+  insertHTML(html) {
+    this.$el.insertAdjacentHTML('beforeend', html)
+  }
+
   clear() {
     this.html('')
     return this
@@ -50,19 +54,67 @@ class Dom {
   closest(selector) {
     return $(this.$el.closest(selector))
   }
+  addClass(className) {
+    this.$el.classList.add(className)
+    return this
+  }
+
+  removeClass(className) {
+    this.$el.classList.remove(className)
+    return this
+  }
+
+  toggleClass(className) {
+    this.$el.classList.toggle(className)
+    return this
+  }
+  containsClass(className) {
+    return this.$el.classList.contains(className)
+  }
+
+  get numValue() {
+    const found = this.$el.value.match(/([0-9]*)/g);
+    const value = found.filter(el => el.length != 0)
+        .map(el => parseInt(el, 10))[0] || 0
+    this.$el.value = value
+    return value
+  }
+
+  get children() {
+    return this.$el.children
+  }
 
   getCoords() {
     return this.$el.getBoundingClientRect()
   }
 
   findAll(selector) {
-    return this.$el.querySelectorAll(selector)
+    // return this.$el.querySelectorAll(selector)
+    return [...this.$el.querySelectorAll(selector)].map(el => $(el))
+  }
+
+  find(selector) {
+    return $(this.$el.querySelector(selector))
   }
 
   css(styles={}) {
     Object.entries(styles).forEach(([key, value]) => {
       this.$el.style.setProperty(key, value)
     })
+    return this
+  }
+
+  id(parse) {
+    if (parse) {
+      // const id = this.id()
+      return this.find('[data-id="0:0"]')
+    }
+    const [row, col] = this.data.id.split(':').map(d => parseInt(d, 10))
+    return {row, col}
+  }
+
+  focus() {
+    this.$el.focus()
     return this
   }
 }

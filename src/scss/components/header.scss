@@ -1,9 +1,5 @@
 .excel__header {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: $header-height;
+  grid-area: header;
   padding: 8px 4px 0;
   display: flex;
   justify-content: space-between;
@@ -19,6 +15,10 @@
     line-height: 22px;
     outline: none;
 
+    & + * {
+      user-select: none;
+    }
+
     &:hover {
       border: 2px solid $border-color;
     }
@@ -26,11 +26,9 @@
     &:focus {
       border: 2px solid #1a73e8;
     }
-
   }
 
   & .button {
     @include button(red);
   }
-  
 }

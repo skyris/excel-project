@@ -1,21 +1,21 @@
 import {capitalize} from '@core/utils'
 
 export class DomListener {
-  constructor($root, listeners=[]) {
+  constructor($root, options) {
     if (!$root) {
       throw new Error(`No $root provided for DomListener!`)
     }
     this.$root = $root
-    this.listeners = listeners
+    this.listeners = options.listeners || []
+    this.name = options.name || ''
   }
 
   initDOMListeners() {
     this.listeners.forEach(listener => {
       const method = getMethodName(listener)
       if (!this[method]) {
-        const name = this.name || ''
         throw new Error(
-            `Method ${method} is not implemented in ${name} Component`
+            `Method ${method} is not implemented in ${this.name} Component`
         )
       }
       this[method] = this[method].bind(this)

@@ -1,17 +1,20 @@
 import {ExcelComponent} from '@core/ExcelComponent'
-import {createTable} from './table.template.js'
+import {createTable, addMoreRowsToTable} from './table.template.js'
 import {resizeHandler} from './table.resize.js'
+import {TableSelection} from './TableSelection.js'
+import {shouldResize, isCell, isAddRowsButton} from './table.functions.js'
 import {$} from '@core/dom'
+
 
 export class Table extends ExcelComponent {
   static className = 'excel__table'
 
   constructor($root) {
     super($root, {
-      listeners: ['mousedown'],
+      listeners: ['mousedown', 'click', 'keydown'],
+      name: 'Table',
     })
     this.document = {}
-    this.getElements = this.getElements.bind(this)
     this.toDebounce = false
     // Vertical and horizontal resize pointers
     this.horizontal = $.create('div', 'horizontal-pointer')
@@ -19,20 +22,46 @@ export class Table extends ExcelComponent {
   }
 
   toHTML() {
-    return createTable(50)
+    return createTable()
   }
 
-  getElements(selector) {
-    let element = this.document[selector]
-    if (!element) {
-      element = document.querySelectorAll(selector)
-      this.document[selector] = element
-    }
+  prepare() {
+    // this.selection = new TableSelection(this.$root)
+  }
 
-    return element
+  init() {
+    super.init()
+    this.selection = new TableSelection(this.$root)
+    // const $cells = this.$root.find('[data-id="1:1"]')
+    // this.selection.select($cells)
   }
 
   onMousedown(event) {
-    resizeHandler(this, event)
+    if (shouldResize(event)) {
+      resizeHandler(this, event)
+    } else if (isCell(event)) {
+      this.selection.mouseDownHandle(event)
+    } else if (isAddRowsButton(event)) {
+      addMoreRowsToTable()
+    }
+  }
+
+  onKeydown(event) {
+    const keys = [
+      'Tab',
+      'Enter',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+    ]
+    const shiftEnter = event.key === 'Enter' && event.shiftKey
+    if (keys.includes(event.key) && !shiftEnter) {
+      this.selection.keyDownHandle(event)
+    }
+  }
+
+  onClick(event) {
+    // this.tableSelection.select(event)
   }
 }
