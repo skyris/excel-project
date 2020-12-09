@@ -13,6 +13,21 @@ class Dom {
     return this.$el.outerHTML.trim()
   }
 
+  text(text) {
+    if (typeof text === 'string') {
+      if (this.$el.tagName.toLowerCase() === 'input') {
+        this.$el.value = text
+      } else {
+        this.$el.textContent = text
+      }
+      return this
+    }
+    if (this.$el.tagName.toLowerCase() === 'input') {
+      return this.$el.value.trim()
+    }
+    return this.$el.textContent.trim()
+  }
+
   insertHTML(html) {
     this.$el.insertAdjacentHTML('beforeend', html)
   }
@@ -115,6 +130,11 @@ class Dom {
 
   focus() {
     this.$el.focus()
+    return this
+  }
+
+  blur() {
+    this.$el.blur()
     return this
   }
 }
