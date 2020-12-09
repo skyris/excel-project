@@ -8,6 +8,7 @@ export class DomListener {
     this.$root = $root
     this.listeners = options.listeners || []
     this.name = options.name || ''
+    this.emitter = options.emitter
   }
 
   initDOMListeners() {

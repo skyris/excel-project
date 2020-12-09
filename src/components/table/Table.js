@@ -9,13 +9,12 @@ import {$} from '@core/dom'
 export class Table extends ExcelComponent {
   static className = 'excel__table'
 
-  constructor($root) {
+  constructor($root, options) {
     super($root, {
-      listeners: ['mousedown', 'click', 'keydown'],
+      listeners: ['mousedown', 'click', 'keydown', 'input'],
       name: 'Table',
+      ...options,
     })
-    this.document = {}
-    this.toDebounce = false
     // Vertical and horizontal resize pointers
     this.horizontal = $.create('div', 'horizontal-pointer')
     this.vertical = $.create('div', 'vertical-pointer')
@@ -26,14 +25,38 @@ export class Table extends ExcelComponent {
   }
 
   prepare() {
-    // this.selection = new TableSelection(this.$root)
+  }
+
+  get $cursor() {
+    return this.selection.matrix.$cursor
   }
 
   init() {
     super.init()
     this.selection = new TableSelection(this.$root)
-    // const $cells = this.$root.find('[data-id="1:1"]')
-    // this.selection.select($cells)
+    this.$emit('table:selected', this.$cursor.text())
+    this.$on('formula:input', text => {
+      this.$cursor.text(text)
+    })
+
+    this.$on('formula:enter', () => {
+      this.$cursor.focus()
+      // moveCursorToEnd($el)
+      // function moveCursorToEnd(el) {
+      //   if (typeof el.selectionStart == "number") {
+      //     el.selectionStart = el.selectionEnd = el.value.length;
+      //   } else if (typeof el.createTextRange != "undefined") {
+      //     el.focus();
+      //     var range = el.createTextRange();
+      //     range.collapse(false);
+      //     range.select();
+      //   }
+      // }
+    })
+  }
+
+  onInput(event) {
+    this.$emit('table:input', $(event.target).text())
   }
 
   onMousedown(event) {
@@ -41,6 +64,7 @@ export class Table extends ExcelComponent {
       resizeHandler(this, event)
     } else if (isCell(event)) {
       this.selection.mouseDownHandle(event)
+      this.$emit('table:selected', this.$cursor.text())
     } else if (isAddRowsButton(event)) {
       addMoreRowsToTable()
     }
@@ -58,6 +82,7 @@ export class Table extends ExcelComponent {
     const shiftEnter = event.key === 'Enter' && event.shiftKey
     if (keys.includes(event.key) && !shiftEnter) {
       this.selection.keyDownHandle(event)
+      this.$emit('table:selected', this.$cursor.text())
     }
   }
 

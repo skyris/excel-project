@@ -33,13 +33,12 @@ const toColInfo = (content, index) => {
 
 const toCell = row => (_, col) => {
   return `
-    <div 
+    <input 
       class="cell"
-      contenteditable 
       data-col="${col}"
       data-type="cell"
       data-id="${row}:${col}"
-    ></div> 
+    >
   `
 }
 
