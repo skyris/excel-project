@@ -184,6 +184,7 @@
           border-top: 0;
           border-left: 0;
           color: #111;
+          background-color: transparent;
           white-space: nowrap;
 
           scroll-snap-align: start;
@@ -192,9 +193,15 @@
 
           &.selected {
             border: none;
-            outline: 2px solid $primary-color;
+            outline: 3px solid $primary-color;
             z-index: 2;
+
+            &:not(:focus) {
+              outline-color: transparent;
+              border: 2px solid $primary-color;
+            }
           }
+
 
           &.group-selected {
             background: rgba(14, 101, 235, .1);
