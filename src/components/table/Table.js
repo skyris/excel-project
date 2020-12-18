@@ -3,6 +3,7 @@ import {createTable, addMoreRowsToTable} from './table.template.js'
 import {resizeHandler} from './table.resize.js'
 import {TableSelection} from './TableSelection.js'
 import {shouldResize, isCell, isAddRowsButton} from './table.functions.js'
+import {tableResize, changeText, addRows} from '@/store/actions'
 import {$} from '@core/dom'
 
 
@@ -18,10 +19,13 @@ export class Table extends ExcelComponent {
     // Vertical and horizontal resize pointers
     this.horizontal = $.create('div', 'horizontal-pointer')
     this.vertical = $.create('div', 'vertical-pointer')
+    this.$inner = null
+    this.$rowsHeader = null
+    this.$addRowsInput = null
   }
 
   toHTML() {
-    return createTable()
+    return createTable(this.store.getState())
   }
 
   prepare() {
@@ -33,40 +37,52 @@ export class Table extends ExcelComponent {
 
   init() {
     super.init()
+
+    this.$inner = this.$root.find('.inner')
+    this.$rowsHeader = this.$root.find('.rows-header')
+    this.$addRowsInput = this.$root.find('[data-type="add-rows-input"]')
+
     this.selection = new TableSelection(this.$root)
     this.$emit('table:selected', this.$cursor.text())
     this.$on('formula:input', text => {
       this.$cursor.text(text)
+      this.$dispatch(changeText({
+        text: this.$cursor.text(),
+        id: this.$cursor.id(':'),
+      }))
     })
 
     this.$on('formula:enter', () => {
       this.$cursor.focus()
-      // moveCursorToEnd($el)
-      // function moveCursorToEnd(el) {
-      //   if (typeof el.selectionStart == "number") {
-      //     el.selectionStart = el.selectionEnd = el.value.length;
-      //   } else if (typeof el.createTextRange != "undefined") {
-      //     el.focus();
-      //     var range = el.createTextRange();
-      //     range.collapse(false);
-      //     range.select();
-      //   }
-      // }
     })
   }
 
   onInput(event) {
-    this.$emit('table:input', $(event.target).text())
+    const $target = $(event.target)
+    this.$dispatch(changeText({
+      text: $target.text(),
+      id: $target.id(':'),
+    }))
   }
 
-  onMousedown(event) {
+  async resizeTable(event) {
+    try {
+      const data = await resizeHandler(this, event)
+      this.$dispatch(tableResize(data))
+    } catch (e) {
+      console.warn('Resize error: ', e.message)
+    }
+  }
+
+  async onMousedown(event) {
     if (shouldResize(event)) {
-      resizeHandler(this, event)
+      this.resizeTable(event)
     } else if (isCell(event)) {
       this.selection.mouseDownHandle(event)
       this.$emit('table:selected', this.$cursor.text())
     } else if (isAddRowsButton(event)) {
-      addMoreRowsToTable()
+      const data = await addMoreRowsToTable(this)
+      this.$dispatch(addRows(data))
     }
   }
 

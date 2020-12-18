@@ -9,6 +9,7 @@ export class DomListener {
     this.listeners = options.listeners || []
     this.name = options.name || ''
     this.emitter = options.emitter
+    this.store = options.store
   }
 
   initDOMListeners() {
