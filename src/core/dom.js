@@ -119,10 +119,9 @@ class Dom {
     return this
   }
 
-  id(parse) {
-    if (parse) {
-      // const id = this.id()
-      return this.find('[data-id="0:0"]')
+  id(colon) {
+    if (colon === ':') {
+      return this.data.id
     }
     const [row, col] = this.data.id.split(':').map(d => parseInt(d, 10))
     return {row, col}
