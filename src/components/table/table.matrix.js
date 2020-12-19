@@ -1,5 +1,4 @@
-import {range} from '@core/utils'
-import {TABLE} from '@core/utils'
+import {range, TABLE} from '@core/utils'
 import {isDomInstance} from './table.functions'
 
 const FIRST_PLACE = 'FIRST_PLACE'
@@ -82,6 +81,14 @@ export class Matrix {
       this.removeHeaderClass()
       this._data = []
       this.cursorPlace = null
+    }
+  }
+
+  applyStyle(style) {
+    if (!this.isEmpty) {
+      this._data.forEach($el => $el.css(style))
+    } else {
+      this.$cursor.css(style)
     }
   }
 

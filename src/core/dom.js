@@ -114,9 +114,19 @@ class Dom {
 
   css(styles={}) {
     Object.entries(styles).forEach(([key, value]) => {
+      // in some cases works this:
+      this.$el.style[key] = value
+      // in other cases works that:
       this.$el.style.setProperty(key, value)
     })
     return this
+  }
+
+  getStyles(styles=[]) {
+    return styles.reduce((result, style) => {
+      result[style] = this.$el.style[style]
+      return result
+    }, {})
   }
 
   id(colon) {

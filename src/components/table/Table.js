@@ -2,6 +2,7 @@ import {ExcelComponent} from '@core/ExcelComponent'
 import {createTable, addMoreRowsToTable} from './table.template.js'
 import {resizeHandler} from './table.resize.js'
 import {TableSelection} from './TableSelection.js'
+import {defaultStyles} from '@core/constants'
 import {shouldResize, isCell, isAddRowsButton} from './table.functions.js'
 import {tableResize, changeText, addRows} from '@/store/actions'
 import {$} from '@core/dom'
@@ -43,7 +44,6 @@ export class Table extends ExcelComponent {
     this.$addRowsInput = this.$root.find('[data-type="add-rows-input"]')
 
     this.selection = new TableSelection(this)
-    this.$emit('table:selected', this.$cursor.text())
     this.$on('formula:input', text => {
       this.$cursor.text(text)
       this.$dispatch(changeText({
@@ -52,8 +52,13 @@ export class Table extends ExcelComponent {
       }))
     })
 
+    this.selectCell()
+
     this.$on('formula:enter', () => {
       this.$cursor.focus()
+    })
+    this.$on('toolbar:applyStyle', value => {
+      this.selection.matrix.applyStyle(value)
     })
   }
 
@@ -79,11 +84,17 @@ export class Table extends ExcelComponent {
       this.resizeTable(event)
     } else if (isCell(event)) {
       this.selection.mouseDownHandle(event)
-      this.$emit('table:selected', this.$cursor.text())
+      this.selectCell()
     } else if (isAddRowsButton(event)) {
       const data = await addMoreRowsToTable(this)
       this.$dispatch(addRows(data))
     }
+  }
+
+  selectCell() {
+    const a = this.$cursor.getStyles(Object.keys(defaultStyles))
+    console.log(a);
+    this.$emit('table:selected', this.$cursor.text())
   }
 
   onKeydown(event) {
@@ -98,7 +109,7 @@ export class Table extends ExcelComponent {
     const shiftEnter = event.key === 'Enter' && event.shiftKey
     if (keys.includes(event.key) && !shiftEnter) {
       this.selection.keyDownHandle(event)
-      this.$emit('table:selected', this.$cursor.text())
+      this.selectCell()
     }
   }
 
