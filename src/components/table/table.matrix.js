@@ -11,9 +11,10 @@ export class Matrix {
   static groupClass = 'group-selected'
   static headerClass = 'header-selected'
 
-  constructor($root) {
+  constructor(table) {
     this._data = []
-    this.$root = $root
+    this.$root = table.$root
+    this.$addRowsInput = table.$addRowsInput
     this.$cursor = null
     this.cursorPlace = null
     this.border = {
@@ -288,7 +289,10 @@ export class Matrix {
     if (this.isEmpty) {
       const {row, col} = this.$cursor.id()
       if (sign === 1) {
-        if (row === TABLE.maxHeight - 1) return;
+        if (row === TABLE.maxHeight - 1) {
+          this.$addRowsInput.$el.scrollIntoView()
+          return;
+        }
         this.$cursor.removeClass(Matrix.cursorClass)
         this.$cursor = this.$root.find(`[data-id="${row+1}:${col}"]`)
         this.$cursor.addClass(Matrix.cursorClass).focus()

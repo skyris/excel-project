@@ -42,7 +42,7 @@ export class Table extends ExcelComponent {
     this.$rowsHeader = this.$root.find('.rows-header')
     this.$addRowsInput = this.$root.find('[data-type="add-rows-input"]')
 
-    this.selection = new TableSelection(this.$root)
+    this.selection = new TableSelection(this)
     this.$emit('table:selected', this.$cursor.text())
     this.$on('formula:input', text => {
       this.$cursor.text(text)

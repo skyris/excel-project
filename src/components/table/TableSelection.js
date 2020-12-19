@@ -3,9 +3,9 @@ import {Matrix} from './table.matrix.js'
 import {isCell} from './table.functions.js'
 
 export class TableSelection {
-  constructor($root) {
-    this.$root = $root
-    this.matrix = new Matrix($root)
+  constructor(table) {
+    this.$root = table.$root
+    this.matrix = new Matrix(table)
     this.matrix.setCursor(this.$root.find('[data-id="0:0"]'))
 
     window['TableSelect'] = this // for debugging
