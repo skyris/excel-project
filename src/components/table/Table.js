@@ -12,7 +12,7 @@ export class Table extends ExcelComponent {
 
   constructor($root, options) {
     super($root, {
-      listeners: ['mousedown', 'click', 'keydown', 'input'],
+      listeners: ['mousedown', 'click', 'keydown', 'input', 'paste'],
       name: 'Table',
       ...options,
     })
@@ -104,5 +104,9 @@ export class Table extends ExcelComponent {
 
   onClick(event) {
     // this.tableSelection.select(event)
+  }
+
+  onPaste(event) {
+    this.onInput(event)
   }
 }
